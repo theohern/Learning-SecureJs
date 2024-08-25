@@ -5,7 +5,7 @@ const auth = require('../middlewares/authMiddleware');
 
 
 // Définir les routes CRUD pour les utilisateurs
-router.get('/', auth,  userController.getAllUsers);
+router.get('/',  userController.getAllUsers);
 router.get('/:id', auth, userController.getUserById);
 router.post('/', userController.createUser);
 router.put('/:id', auth, userController.updateUser);

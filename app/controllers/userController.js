@@ -20,7 +20,7 @@ exports.getAllUsers = async (req, res) => {
         const users = await User.find();
         res.json(users);
     } catch (err) {
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message : 'Erreur server'});
     }
 };
 
@@ -28,17 +28,17 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).send('Utilisateur non trouvé');
+        if (!user) return res.status(404).json({message :'Utilisateur non trouvé'});
         res.json(user);
     } catch (err) {
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message :'Erreur serveur'});
     }
 };
 
 // Créer un nouvel utilisateur
 exports.createUser = async (req, res) => {
     const { error } = schema.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return res.status(400).json({message :error.details[0].message});
 
     const { name, email, password } = req.body;
     try {
@@ -50,7 +50,7 @@ exports.createUser = async (req, res) => {
         res.status(201).json(newUser);
     } catch (err) {
         console.error("server error:", err.message);
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message :'Erreur serveur'});
     }
 };
 
@@ -58,10 +58,10 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!user) return res.status(404).send('Utilisateur non trouvé');
+        if (!user) return res.status(404).json({message :'Utilisateur non trouvé'});
         res.json(user);
     } catch (err) {
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message :'Erreur serveur'});
     }
 };
 
@@ -69,34 +69,34 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).send('Utilisateur non trouvé');
-        res.send('Utilisateur supprimé');
+        if (!user) return res.status(404).json({message :'Utilisateur non trouvé'});
+        res.json({message :'Utilisateur supprimé'});
     } catch (err) {
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message :'Erreur serveur'});
     }
 };
 
 exports.loginUser = async (req, res) => {
     // Valider les données d'entrée avec Joi
     const { error } = loginSchema.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return res.status(400).json({message :error.details[0].message});
 
     const { email, password } = req.body;
 
     try {
         // Trouver l'utilisateur par email
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).send('Utilisateur non trouvé');
+        if (!user) return res.status(400).json({message :'Utilisateur non trouvé'});
 
         // Comparer le mot de passe
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).send('Mot de passe incorrect');
+        if (!isMatch) return res.status(400).json({message :'Mot de passe incorrect'});
 
         // Créer et assigner un token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
     } catch (err) {
         console.error("server error:", err.message);
-        res.status(500).send('Erreur serveur');
+        res.status(500).json({message :'Erreur serveur'});
     }
 };
