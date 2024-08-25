@@ -1,20 +1,19 @@
-# Utilisez une image Node.js officielle comme base
 FROM node:18
 
-# Créez un répertoire de travail dans le container
+# Définir le répertoire de travail dans le container
 WORKDIR /usr/src/app
 
-# Copiez les fichiers package.json et package-lock.json
+# Copier les fichiers package.json et package-lock.json
 COPY package*.json ./
 
-# Installez les dépendances
+# Installer les dépendances
 RUN npm install
 
-# Copiez le reste du code de l'application
+# Copier le reste des fichiers de l'application
 COPY . .
 
-# Exposez le port 8080 pour accéder à l'application
+# Exposer le port sur lequel l'application va fonctionner
 EXPOSE 8080
 
-# Commande pour démarrer l'application
+# Démarrer l'application
 CMD [ "npm", "start" ]
